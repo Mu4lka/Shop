@@ -1,54 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Solution.Host.Contracts;
+﻿namespace Solution.Host.Contracts;
 
 public class UserRegistrationRequest
 {
     /// <summary>
     /// Email
     /// </summary>
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
+    public string Email { get; set; } = default!;
 
     /// <summary>
     /// Пароль
     /// </summary>
-    [Required]
-    [StringLength(100, MinimumLength = 5)]
-    public string Password { get; set; }
+    public string Password { get; set; } = default!;
 
     /// <summary>
     /// Имя
     /// </summary>
-    [Required]
-    [StringLength(100, MinimumLength = 2)]
-    public string FirstName { get; set; }
+    public string FirstName { get; set; } = default!;
 
     /// <summary>
     /// Фамилия
     /// </summary>
-    [Required]
-    [StringLength(100, MinimumLength = 2)]
-    public string Surname { get; set; }
+    public string Surname { get; set; } = default!;
 
     /// <summary>
     /// Отчество
     /// </summary>
-    [StringLength(100, MinimumLength = 2)]
     public string? Patronymic { get; set; }
 
     /// <summary>
     /// Адрес
     /// </summary>
-    [Required]
-    [StringLength(100, MinimumLength = 2)]
-    public string Address { get; set; }
+    public string Address { get; set; } = default!;
 
     /// <summary>
     /// Номер телефона
     /// </summary>
-    [Required]
-    [Phone]
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = default!;
 }

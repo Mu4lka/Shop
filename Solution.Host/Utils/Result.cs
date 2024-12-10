@@ -9,7 +9,7 @@ public class Result
     public bool Failure => !Success;
 
     public Error? Error { get; set; }
-    public Error[]? Errors { get; set; }
+    public Error[]? InnerErrors { get; set; }
 
     public static implicit operator Result(Error error)
     {

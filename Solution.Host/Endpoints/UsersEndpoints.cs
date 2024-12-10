@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Solution.Host.Contracts;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
 using Solution.Host.Domain.ValueObjects;
 using Solution.Host.Endpoints.Services;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace Solution.Host.Endpoints;
 
-public static class UserEndpoints
+public static class UsersEndpoints
 {
     public static void Map(this IEndpointRouteBuilder builder)
     {
@@ -47,10 +46,9 @@ public static class UserEndpoints
     }
 
     private static async Task<IResult> RegistrationAsync(
-        [FromBody] UserRegistrationRequest request,
         [FromServices] IUsersRepository usersRepository,
-        [FromServices] IPasswordHasher passwordHasher
-        )
+        [FromServices] IPasswordHasher passwordHasher,
+        [FromBody] UserRegistrationRequest request)
     {
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
@@ -58,7 +56,7 @@ public static class UserEndpoints
             return Results.Conflict("Пользователь с таким Email уже существует");
 
         string hashPassword = passwordHasher.ToHash(request.Password);
-        
+
         User newUser = User.Create(
             Guid.NewGuid(),
             request.Email,
@@ -67,7 +65,7 @@ public static class UserEndpoints
             request.Address,
             request.PhoneNumber
             );
-        
+
         await usersRepository.CreateAsync(newUser);
         return Results.Created();
     }

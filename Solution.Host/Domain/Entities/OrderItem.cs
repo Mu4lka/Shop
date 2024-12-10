@@ -43,6 +43,9 @@ public class OrderItem : Entity
     /// </summary>
     public Price Price { get; private set; } = default!;
 
+    /// <summary>
+    /// Создать
+    /// </summary>
     public static OrderItem Create(Guid id, Guid orderId, Product product, Price price, int productCount)
     {
         return new OrderItem(id, orderId, product, price, productCount);
@@ -54,16 +57,11 @@ public class OrderItem : Entity
     public static Result<OrderItem?> CreateFromProduct(Guid orderId, Product product, int productCount)
     {
         if (productCount <= 0)
-            return new Error($"Количество выбранных {product} должно быть больше нуля");
+            return new Error($"Количество выбранных {product.Title} должно быть больше нуля");
 
         if (productCount > product.AvailableQuantity)
-            return new Error($"Количество выбранных {product} больше чем доступных. Всего доступно - {product.AvailableQuantity}");
+            return new Error($"Количество выбранных {product.Title} больше чем доступных. Всего доступно - {product.AvailableQuantity}");
 
         return new OrderItem(Guid.NewGuid(), orderId, product, product.Price, productCount);
-    }
-
-    public override int GetHashCode()
-    {
-        return OrderId.GetHashCode() + ProductId.GetHashCode();
     }
 }

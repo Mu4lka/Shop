@@ -1,26 +1,36 @@
 ﻿using Dapper;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
-using Solution.Host.Domain.ValueObjects;
 using Solution.Host.Infrastructure.Store.Tables;
-
+using Solution.Host.Infrastructure.Store.Tables.Extensions;
 
 namespace Solution.Host.Infrastructure.Store.Repositories;
 
-public class UsersRepository : BaseRepository, IUsersRepository
+internal class UsersRepository : BaseRepository, IUsersRepository
 {
     public UsersRepository(IConfiguration configuration) : base(configuration) { }
 
     public async Task CreateAsync(User newUser)
     {
-        const string sql = $"INSERT INTO users() VALUES(@)";
+        const string sql = """
+        INSERT INTO Users (Id, FirstName, Surname, Patronymic, Email, PasswordHash, Address, PhoneNumber)
+        VALUES (@Id, @FirstName, @Surname, @Patronymic, @Email, @PasswordHash, @Address, @PhoneNumber);
+        """;
         using var connection = GetConnection();
         await connection.OpenAsync();
-        var products = await connection.ExecuteAsync(sql, newUser.ToTable());
+        await connection.ExecuteAsync(sql, newUser.ToTable());
     }
 
-    public Task<User?> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email)
     {
-        throw new NotImplementedException();
+        const string sql = """
+            SELECT * FROM Users WHERE Email = @Email
+            """;
+
+        using var connection = GetConnection();
+        await connection.OpenAsync();
+        var userTable = connection.QueryFirstOrDefault<UserTable>(sql, new { Email = email });
+
+        return userTable?.ToUser();
     }
 }

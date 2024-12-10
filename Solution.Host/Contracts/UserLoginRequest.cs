@@ -7,14 +7,10 @@ internal class UserLoginRequest
     /// <summary>
     /// Email
     /// </summary>
-    [Required]
-    [EmailAddress]
-    public string Email { get; set; }
+    public string Email { get; set; } = default!;
 
     /// <summary>
     /// Пароль
     /// </summary>
-    [Required]
-    [StringLength(100, MinimumLength = 5)]
-    public string Password { get; set; }
+    public string Password { get; set; } = default!;
 }

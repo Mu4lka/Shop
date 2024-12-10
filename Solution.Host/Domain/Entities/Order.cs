@@ -13,7 +13,7 @@ public class Order : Entity
     /// <summary>
     /// Идентификатор заказчика
     /// </summary>
-    public CustomerId CustomerId { get; private set; }
+    public CustomerId CustomerId { get; private set; } = default!;
 
     /// <summary>
     /// Создан в
@@ -31,13 +31,6 @@ public class Order : Entity
     public HashSet<OrderItem> Items { get; private set; }
 
     /// <summary>
-    /// Добавить новый элемент в заказ
-    /// </summary>
-    /// <param name="item"></param>
-    public bool AddOrderItem(OrderItem item)
-        => Items.Add(item);
-
-    /// <summary>
     /// Создать
     /// </summary>
     public static Order Create(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, HashSet<OrderItem> items)
@@ -47,7 +40,7 @@ public class Order : Entity
             CustomerId = customerId,
             CreatedAt = createdAt,
             Status = status,
-            Items = items.ToHashSet(),
+            Items = items,
         };
 
     /// <summary>
@@ -56,30 +49,17 @@ public class Order : Entity
     public static Result<Order> CreateNew(Guid userId, ICollection<(int Count, Product Product)> items)
     {
         if (items.Count < 1)
-        {
             return new Error("Ошибка создания заказа. Нужен хотя бы один продукт", "CREATE_ORDER_400_2");
-        }
 
-        var uniqueProductsCount = items.Select(i => i.Product.Id).ToHashSet().Count;
-
-        if (uniqueProductsCount != items.Count)
-        {
+        var isNotUnique = items.GroupBy(i => i.Product.Id).Any(g => g.Count() > 1);
+        if (isNotUnique)
             return new Error("Ошибка создания заказа. Содержатся неуникальные продукты", "CREATE_ORDER_400_0");
-        }
 
         var orderId = Guid.NewGuid();
+        var itemsResult = CreateOrderItems(orderId, items);
 
-        var results = items.Select(i => OrderItem.CreateFromProduct(orderId, i.Product, i.Count));
-
-        if (results.Any(r => r.Failure))
-        {
-            return new Result<Order>()
-            {
-                Success = false,
-                Error = new Error("Ошибка создания заказа", "CREATE_ORDER_400_1"),
-                Errors = results.Where(r => r.Failure).Select(r => r.Error).ToArray()!
-            };
-        }
+        if (itemsResult.Failure)
+            return itemsResult.Error!;
 
         var order = new Order()
         {
@@ -87,8 +67,24 @@ public class Order : Entity
             CustomerId = userId,
             CreatedAt = DateTime.UtcNow,
             Status = OrderStatus.Created,
-            Items = results.Select(r => r.Data).ToHashSet()!
+            Items = itemsResult.Data!
         };
         return order;
+    }
+
+    private static Result<HashSet<OrderItem>> CreateOrderItems(Guid orderId, ICollection<(int Count, Product Product)> items)
+    {
+        var results = items.Select(i => OrderItem.CreateFromProduct(orderId, i.Product, i.Count));
+
+        if (results.Any(r => r.Failure))
+        {
+            return new Result<HashSet<OrderItem>>()
+            {
+                Success = false,
+                Error = new Error("Ошибка создания элементов заказа", "CREATE_ORDER_400_1"),
+                InnerErrors = results.Where(r => r.Failure).Select(r => r.Error).ToArray()!
+            };
+        }
+        return results.Select(r => r.Data).ToHashSet()!;
     }
 }

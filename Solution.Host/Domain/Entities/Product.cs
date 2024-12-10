@@ -13,12 +13,12 @@ public class Product : Entity
     /// <summary>
     /// Название
     /// </summary>
-    public string Title { get; private set; } = string.Empty;
+    public string Title { get; private set; } = default!;
 
     /// <summary>
     /// Описание
     /// </summary>
-    public string Description { get; private set; } = string.Empty;
+    public string Description { get; private set; } = default!;
 
     /// <summary>
     /// Доступное количество

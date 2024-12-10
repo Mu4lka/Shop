@@ -16,12 +16,12 @@ public class ProductTable : Table
     /// <summary>
     /// Доступное количество
     /// </summary>
-    public int AvailableQuantity { get; set; } = 0;
+    public int AvailableQuantity { get; set; }
 
     /// <summary>
     /// Артикул
     /// </summary>
-    public string Sku { get; set; }
+    public string Sku { get; set; } = default!;
 
     /// <summary>
     /// Колличество

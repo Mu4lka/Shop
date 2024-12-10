@@ -7,7 +7,7 @@ internal static class TableExtensions
 {
     public static Product ToProduct(this ProductTable source)
         => Product.Create(
-
+            source.Id,
             source.Title,
             source.Description,
             source.AvailableQuantity,
@@ -17,6 +17,23 @@ internal static class TableExtensions
     public static UserTable ToTable(this User source)
         => new UserTable()
         {
-            Id 
+            Id = source.Id,
+            FirstName = source.FullName.FirstName,
+            Surname = source.FullName.Surname,
+            Patronymic = source.FullName.Patronymic,
+            Email = source.Email,
+            PasswordHash = source.PasswordHash,
+            Address = source.Address,
+            PhoneNumber = source.PhoneNumber,
         };
+
+    public static User ToUser(this UserTable source)
+        => User.Create(
+            source.Id,
+            source.Email,
+            source.PasswordHash,
+            new FullName(source.FirstName, source.Surname, source.Patronymic),
+            source.Address,
+            source.PhoneNumber
+            );
 }

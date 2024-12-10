@@ -3,10 +3,12 @@ namespace Solution.Host.Domain.ValueObjects;
 
 public record Sku
 {
-    public string Code { get; set; }
+    private Sku() { }
 
-    internal static Sku Create(string sku)
+    public string Code { get; private set; }
+
+    public static Sku Create(string sku)
     {
-        throw new NotImplementedException();
+        return new Sku() { Code = sku };
     }
 }
