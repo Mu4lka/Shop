@@ -10,17 +10,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.Services.StartMigrator(builder.Configuration);
 builder.Services.ConfigureInfrastructure();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
 builder.Services.AddAuthorization();
-builder.Services.AddHttpLogging();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, opts =>
     {
@@ -29,16 +28,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["SecretKey"]!)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("SecretKey")!)),
         };
     });
 
 var app = builder.Build();
-app.UseHttpLogging();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithPreferredScheme(JwtBearerDefaults.AuthenticationScheme)
+           .WithHttpBearerAuthentication(bearer =>
+           {
+               bearer.Token = "your-bearer-token";
+           });
+    });
 }
 app.UseAuthentication();
 app.UseAuthorization();

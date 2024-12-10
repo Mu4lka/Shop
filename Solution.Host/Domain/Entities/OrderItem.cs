@@ -57,10 +57,10 @@ public class OrderItem : Entity
     public static Result<OrderItem?> CreateFromProduct(Guid orderId, Product product, int productCount)
     {
         if (productCount <= 0)
-            return new Error($"Количество выбранных {product.Title} должно быть больше нуля");
+            return new Error($"Количество выбранных продуктов с названием {product.Title} должно быть больше нуля");
 
         if (productCount > product.AvailableQuantity)
-            return new Error($"Количество выбранных {product.Title} больше чем доступных. Всего доступно - {product.AvailableQuantity}");
+            return new Error($"Количество выбранных продуктов с названием {product.Title} больше чем доступных. Всего доступно - {product.AvailableQuantity}");
 
         return new OrderItem(Guid.NewGuid(), orderId, product, product.Price, productCount);
     }
