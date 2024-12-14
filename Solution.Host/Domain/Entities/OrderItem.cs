@@ -64,4 +64,9 @@ public class OrderItem : Entity
 
         return new OrderItem(Guid.NewGuid(), orderId, product, product.Price, productCount);
     }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(OrderId, ProductId);
+    }
 }

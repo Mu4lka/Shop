@@ -2,6 +2,6 @@
 
 internal interface IPasswordHasher
 {
-    string ToHash(string password);
+    string Hash(string password);
     bool Verify(string sourcePassword, string passwordHash);
 }

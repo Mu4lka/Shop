@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-
-namespace Solution.Host.Utils;
+﻿namespace Solution.Host.Utils;
 
 public class Result
 {
@@ -21,7 +19,7 @@ public class Result<T> : Result
 {
     public T? Data { get; set; }
 
-    
+
     public static implicit operator Result<T>(Error error)
     {
         return new Result<T>() { Success = false, Error = error };

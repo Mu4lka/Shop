@@ -1,8 +1,7 @@
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using Solution.Host;
 using Solution.Host.Endpoints;
 using Solution.Host.Infrastructure;
 using Solution.Host.Infrastructure.Store.Migrations;
@@ -46,6 +45,7 @@ if (app.Environment.IsDevelopment())
            });
     });
 }
+
 app.UseAuthentication();
 app.UseAuthorization();
 

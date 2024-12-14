@@ -28,7 +28,7 @@ internal static class TableExtensions
         };
 
     public static User ToUser(this UserTable source)
-        => User.Create(
+        => new User(
             source.Id,
             source.Email,
             source.PasswordHash,

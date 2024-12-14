@@ -55,9 +55,9 @@ public static class UsersEndpoints
         if (user != null)
             return Results.Conflict("Пользователь с таким Email уже существует");
 
-        string hashPassword = passwordHasher.ToHash(request.Password);
+        string hashPassword = passwordHasher.Hash(request.Password);
 
-        User newUser = User.Create(
+        User newUser = new User(
             Guid.NewGuid(),
             request.Email,
             hashPassword,

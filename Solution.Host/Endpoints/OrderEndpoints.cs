@@ -3,6 +3,8 @@ using Solution.Host.Contracts;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
 using Solution.Host.Endpoints.Services;
+using Solution.Host.Utils;
+using Solution.Host.Utils.Extensions;
 
 namespace Solution.Host.Endpoints;
 
@@ -29,21 +31,16 @@ public static class OrderEndpoints
         var user = userProvider.Get();
         var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId));
 
-        var items = request.Items
-            .Select(i => (i.Count, products.FirstOrDefault(p => p.Id == i.ProductId)))
-            .Where(i => i.Item2 != null)
-            .ToList();
-
-        var result = Order.CreateNew(user.Id, items!);
+        Order.Create()
 
         if (result.Failure)
         {
-            return Results.BadRequest(result);
+            return Results.BadRequest(result.ToApiResponse());
         }
 
         await ordersRepository.CreateAsync(result.Data!);
 
-        return Results.Created("", result);
+        return Results.Created("", result.ToApiResponse());
     }
 
     private static async Task<IResult> GetMyOrdersAsync(
@@ -57,8 +54,8 @@ public static class OrderEndpoints
         if (orders.Count() == 0)
             return Results.NoContent();
 
-        var ordersViuw = orders;
+        var getOrdersBody = orders;
 
-        return Results.Ok(ordersViuw);
+        return Results.Ok(ApiResponse.Ok(getOrdersBody));
     }
 }
