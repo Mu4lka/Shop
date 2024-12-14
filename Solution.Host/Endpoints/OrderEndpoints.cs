@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Solution.Host.Contracts;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
@@ -26,21 +27,31 @@ public static class OrderEndpoints
         [FromServices] ICurrentUserProvider userProvider,
         [FromServices] IProductsRepository productsRepository,
         [FromServices] IOrdersRepository ordersRepository,
+        [FromServices] ILogger logger,
         [FromBody] CreateOrderRequest request)
     {
         var user = userProvider.Get();
         var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId));
 
-        Order.Create()
+        logger.LogInformation("Получено продуктов по айди - {count}",products.Count);
 
-        if (result.Failure)
+        var items = products.Join(request.Items, p => p.Id, i => i.ProductId, (p, i) => (i.Count, p));
+
+        logger.LogInformation("Колличество при Join - {count}", items.Count());
+
+        var orderId = Guid.NewGuid();
+
+        var creationUniqueOrderItemsResult = UniqueOrderItems.Create(orderId, items.ToList());
+
+        if (creationUniqueOrderItemsResult.Failure)
         {
-            return Results.BadRequest(result.ToApiResponse());
+            return Results.BadRequest(creationUniqueOrderItemsResult.ToApiResponse());
         }
 
-        await ordersRepository.CreateAsync(result.Data!);
+        var order = Order.Create(orderId, user.Id, creationUniqueOrderItemsResult.Data!);
+        await ordersRepository.CreateAsync(order);
 
-        return Results.Created("", result.ToApiResponse());
+        return Results.Created("", order);
     }
 
     private static async Task<IResult> GetMyOrdersAsync(

@@ -9,6 +9,11 @@ public class Result
     public Error? Error { get; set; }
     public Error[]? InnerErrors { get; set; }
 
+    public static Result<T> Fail<T>(Error error, params Error[]? innerErrors)
+    {
+        return new Result<T>() { Success = false, Error = error, InnerErrors = innerErrors };
+    }
+
     public static implicit operator Result(Error error)
     {
         return new Result() { Success = false, Error = error };

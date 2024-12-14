@@ -6,7 +6,7 @@ namespace Solution.Host.Infrastructure.Store.Tables.Extensions;
 internal static class TableExtensions
 {
     public static Product ToProduct(this ProductTable source)
-        => Product.Create(
+        => Product.Init(
             source.Id,
             source.Title,
             source.Description,

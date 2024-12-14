@@ -35,7 +35,7 @@ public class Product : Entity
     /// </summary>
     public Price Price { get; private set; }
 
-    public static Product Create(Guid id, string title, string description, int availableQuantity, Sku Sku, Price Price)
+    public static Product Init(Guid id, string title, string description, int availableQuantity, Sku Sku, Price Price)
     {
         return new()
         {

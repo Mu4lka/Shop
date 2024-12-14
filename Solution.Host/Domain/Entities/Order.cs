@@ -28,12 +28,12 @@ public class Order : Entity
     /// <summary>
     /// Элементы заказа
     /// </summary>
-    public HashSet<OrderItem> Items { get; private set; }
+    public UniqueOrderItems Items { get; private set; }
 
     /// <summary>
     /// Создать
     /// </summary>
-    public static Order Init(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, HashSet<OrderItem> items)
+    public static Order Init(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, UniqueOrderItems items)
         => new()
         {
             Id = id,
@@ -46,8 +46,8 @@ public class Order : Entity
     /// <summary>
     /// Создать новый заказ
     /// </summary>
-    public static Result<Order> Create(Guid userId, HashSet<OrderItem> items)
+    public static Order Create(Guid orderId, Guid userId, UniqueOrderItems items)
     {
-        return Init(Guid.NewGuid(), userId, DateTime.UtcNow, OrderStatus.Created, items);
+        return Init(orderId, userId, DateTime.UtcNow, OrderStatus.Created, items);
     }
 }
