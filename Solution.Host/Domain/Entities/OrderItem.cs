@@ -46,7 +46,7 @@ public class OrderItem : Entity
     /// <summary>
     /// Создать
     /// </summary>
-    public static OrderItem Create(Guid id, Guid orderId, Product product, Price price, int productCount)
+    public static OrderItem Init(Guid id, Guid orderId, Product product, Price price, int productCount)
     {
         return new OrderItem(id, orderId, product, price, productCount);
     }

@@ -20,12 +20,18 @@ internal class ProductsRepository : BaseRepository, IProductsRepository
         return products.Select(p => p.ToProduct()).ToList();
     }
 
-    public async Task<ICollection<Product>> GetByIdsAsync(IEnumerable<Guid> ids)
+    public async Task<ICollection<Product>> GetByIdsAsync(ICollection<Guid> ids)
     {
-        const string sql = $"SELECT * FROM products WHERE id IN (@Ids)";
+        var idsString = string.Join(",", ids);
+
+        // SQL-запрос с использованием STRING_SPLIT
+        const string sql = @"
+        SELECT * 
+        FROM products 
+        WHERE id IN (SELECT value FROM STRING_SPLIT(@Ids, ','))";
         using var connection = GetConnection();
         await connection.OpenAsync();
-        var products = await connection.QueryAsync<ProductTable>(sql, new { Ids = ids });
+        var products = await connection.QueryAsync<ProductTable>(sql, new { Ids = idsString });
 
         return products.Select(p => p.ToProduct()).ToList();
     }

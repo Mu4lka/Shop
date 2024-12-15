@@ -13,7 +13,7 @@ public class OrderItemTable : Table
     public Guid ProductId { get; set; }
 
     /// <summary>
-    /// Количество продукта
+    /// Количество
     /// </summary>
     public int Count { get; set; }
 

@@ -5,10 +5,15 @@
 /// </summary>
 public record CustomerId
 {
+    public CustomerId(Guid userId)
+    {
+        UserId = userId;
+    }
+
     /// <summary>
     /// Идентификатор пользователя
     /// </summary>
-    public Guid UserId { get; set; }
+    public Guid UserId { get; private set; }
 
     public static implicit operator CustomerId(Guid userId)
     {

@@ -8,6 +8,8 @@ namespace Solution.Host.Domain.Entities;
 /// </summary>
 public class Order : Entity
 {
+    private OrderItemCollection _orderItems;
+
     private Order() { }
 
     /// <summary>
@@ -28,26 +30,34 @@ public class Order : Entity
     /// <summary>
     /// Элементы заказа
     /// </summary>
-    public UniqueOrderItems Items { get; private set; }
+    public ICollection<OrderItem> Items => [.. _orderItems];
 
     /// <summary>
     /// Создать
     /// </summary>
-    public static Order Init(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, UniqueOrderItems items)
+    public static Order Init(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, OrderItemCollection items)
         => new()
         {
             Id = id,
             CustomerId = customerId,
             CreatedAt = createdAt,
             Status = status,
-            Items = items,
+            _orderItems = items,
         };
 
     /// <summary>
     /// Создать новый заказ
     /// </summary>
-    public static Order Create(Guid orderId, Guid userId, UniqueOrderItems items)
+    public static Order Create(Guid orderId, Guid userId, OrderItemCollection items)
     {
         return Init(orderId, userId, DateTime.UtcNow, OrderStatus.Created, items);
     }
+
+    /// <summary>
+    /// Добавить элемент к заказу
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public bool AddOrderItem(OrderItem item)
+        => _orderItems.Add(item);
 }

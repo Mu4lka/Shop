@@ -17,31 +17,29 @@ public static class OrderEndpoints
             .WithTags("Заказы");
 
         group.MapPost("api/v1/orders", CreateOrderAsync)
-            .WithSummary("Создать заказ");
+            .WithSummary("Создать заказ")
+            .RequireAuthorization();
 
         group.MapGet("api/v1/orders/my", GetMyOrdersAsync)
-            .WithSummary("Получить мои заказы");
+            .WithSummary("Получить мои заказы")
+            .RequireAuthorization();
     }
 
     private static async Task<IResult> CreateOrderAsync(
         [FromServices] ICurrentUserProvider userProvider,
         [FromServices] IProductsRepository productsRepository,
         [FromServices] IOrdersRepository ordersRepository,
-        [FromServices] ILogger logger,
+        [FromServices] ILoggerFactory loggerFactory,
         [FromBody] CreateOrderRequest request)
     {
         var user = userProvider.Get();
-        var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId));
-
-        logger.LogInformation("Получено продуктов по айди - {count}",products.Count);
+        var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId).ToList());
 
         var items = products.Join(request.Items, p => p.Id, i => i.ProductId, (p, i) => (i.Count, p));
 
-        logger.LogInformation("Колличество при Join - {count}", items.Count());
-
         var orderId = Guid.NewGuid();
 
-        var creationUniqueOrderItemsResult = UniqueOrderItems.Create(orderId, items.ToList());
+        var creationUniqueOrderItemsResult = OrderItemCollection.Create(orderId, items.ToList());
 
         if (creationUniqueOrderItemsResult.Failure)
         {
