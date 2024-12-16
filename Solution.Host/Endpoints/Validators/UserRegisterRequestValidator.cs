@@ -3,9 +3,9 @@ using Solution.Host.Contracts;
 
 namespace Solution.Host.Endpoints.Validators;
 
-public class UserRegistrationRequestValidator : AbstractValidator<UserRegistrationRequest>
+public class UserRegisterRequestValidator : AbstractValidator<UserRegisterRequest>
 {
-    public UserRegistrationRequestValidator()
+    public UserRegisterRequestValidator()
     {
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")

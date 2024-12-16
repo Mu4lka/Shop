@@ -4,9 +4,6 @@ using Solution.Host.Domain.Interfaces.Repositories;
 using Solution.Host.Domain.ValueObjects;
 using Solution.Host.Infrastructure.Store.Tables;
 using Solution.Host.Infrastructure.Store.Tables.Extensions;
-using Solution.Host.Utils;
-using System.Linq;
-using System.Security.Cryptography;
 
 namespace Solution.Host.Infrastructure.Store.Repositories;
 
@@ -87,7 +84,7 @@ internal class OrdersRepository : BaseRepository, IOrdersRepository
                     order.AddOrderItem(OrderItem.Init(oi.Id, oi.OrderId, p.ToProduct(), new Price(oi.Amount, oi.Currency), oi.Count));
                     return o;
                 }
-                
+
                 orders.Add(
                     Order.Init(
                         o.Id,

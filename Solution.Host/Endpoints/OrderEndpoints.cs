@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Solution.Host.Contracts;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
@@ -29,14 +28,12 @@ public static class OrderEndpoints
         [FromServices] ICurrentUserProvider userProvider,
         [FromServices] IProductsRepository productsRepository,
         [FromServices] IOrdersRepository ordersRepository,
-        [FromServices] ILoggerFactory loggerFactory,
         [FromBody] CreateOrderRequest request)
     {
         var user = userProvider.Get();
         var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId).ToList());
 
-        var items = products.Join(request.Items, p => p.Id, i => i.ProductId, (p, i) => (i.Count, p));
-
+        var items = products.Join(request.Items, p => p.Id, d => d.ProductId, (p, d) => (d.Count, p));
         var orderId = Guid.NewGuid();
 
         var creationUniqueOrderItemsResult = OrderItemCollection.Create(orderId, items.ToList());
@@ -60,7 +57,7 @@ public static class OrderEndpoints
         var user = userProvider.Get();
         var orders = await ordersRepository.GetByCustomerId(user.Id);
 
-        if (orders.Count() == 0)
+        if (orders.Count == 0)
             return Results.NoContent();
 
         var getOrdersBody = orders;

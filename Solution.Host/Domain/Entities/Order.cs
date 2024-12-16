@@ -33,7 +33,7 @@ public class Order : Entity
     public ICollection<OrderItem> Items => [.. _orderItems];
 
     /// <summary>
-    /// Создать
+    /// Инициализатор
     /// </summary>
     public static Order Init(Guid id, CustomerId customerId, DateTime createdAt, OrderStatus status, OrderItemCollection items)
         => new()

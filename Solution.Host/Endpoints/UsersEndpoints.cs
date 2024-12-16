@@ -16,7 +16,7 @@ public static class UsersEndpoints
         var group = builder.MapGroup("")
             .WithTags("Пользователи");
 
-        group.MapPost("api/v1/users/registration", RegistrationAsync)
+        group.MapPost("api/v1/users/register", RegisterAsync)
             .WithSummary("Зарегистрировать пользователя")
             .Produces(StatusCodes.Status201Created);
 
@@ -45,10 +45,10 @@ public static class UsersEndpoints
         return Results.Ok(jwtToken);
     }
 
-    private static async Task<IResult> RegistrationAsync(
+    private static async Task<IResult> RegisterAsync(
         [FromServices] IUsersRepository usersRepository,
         [FromServices] IPasswordHasher passwordHasher,
-        [FromBody] UserRegistrationRequest request)
+        [FromBody] UserRegisterRequest request)
     {
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
@@ -57,14 +57,13 @@ public static class UsersEndpoints
 
         string hashPassword = passwordHasher.Hash(request.Password);
 
-        User newUser = new User(
+        var newUser = new User(
             Guid.NewGuid(),
             request.Email,
             hashPassword,
             new FullName(request.FirstName, request.Surname, request.Patronymic),
             request.Address,
-            request.PhoneNumber
-            );
+            request.PhoneNumber);
 
         await usersRepository.CreateAsync(newUser);
         return Results.Created();
