@@ -1,6 +1,6 @@
 ﻿namespace Solution.Host.Contracts;
 
-public class UserRegisterRequest
+internal class UserRegisterRequest
 {
     /// <summary>
     /// Email

@@ -14,6 +14,16 @@ public class ApiResponse
         };
     }
 
+    public static ApiResponse Fail(ApiError error, params ApiError[] innerErrors)
+    {
+        return new ApiResponse()
+        {
+            Success = false,
+            Error = error,
+            InnerErrors = innerErrors
+        };
+    }
+
     public static ApiResponse<T> Ok<T>(T data)
     {
         return new ApiResponse<T>()

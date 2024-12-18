@@ -1,8 +1,12 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Solution.Host;
+using Solution.Host.Contracts;
+using Solution.Host.Contracts.Mappers;
 using Solution.Host.Endpoints;
+using Solution.Host.Endpoints.Validators;
 using Solution.Host.Infrastructure;
 using Solution.Host.Infrastructure.Store.Migrations;
 using System.Text;
@@ -16,6 +20,12 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.StartMigrator(builder.Configuration);
 builder.Services.ConfigureInfrastructure();
+builder.Services.ConfigureMappers();
+
+builder.Services.AddScoped<IValidator<CreateOrderRequest>, CreateOrderRequestValidator>();
+builder.Services.AddScoped<IValidator<UserLoginRequest>, UserLoginRequestValidator>();
+builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterRequestValidator>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

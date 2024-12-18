@@ -3,7 +3,7 @@ using Solution.Host.Contracts;
 
 namespace Solution.Host.Endpoints.Validators;
 
-public class UserRegisterRequestValidator : AbstractValidator<UserRegisterRequest>
+internal class UserRegisterRequestValidator : AbstractValidator<UserRegisterRequest>
 {
     public UserRegisterRequestValidator()
     {

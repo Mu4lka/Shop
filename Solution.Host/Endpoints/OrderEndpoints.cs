@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Solution.Host.Contracts;
+using Solution.Host.Contracts.Mappers;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
 using Solution.Host.Endpoints.Services;
@@ -28,30 +30,44 @@ public static class OrderEndpoints
         [FromServices] ICurrentUserProvider userProvider,
         [FromServices] IProductsRepository productsRepository,
         [FromServices] IOrdersRepository ordersRepository,
+        [FromServices] IValidator<CreateOrderRequest> validator,
         [FromBody] CreateOrderRequest request)
     {
+        var validationResult = validator.Validate(request);
+
+        if (!validationResult.IsValid)
+            return Results.BadRequest(validationResult.Errors);
+
         var user = userProvider.Get();
         var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId).ToList());
+
+        if (products.Count != request.Items.Count)
+        {
+            return Results.BadRequest(ApiResponse.Fail(
+                new ApiError("Ошибка создания заказа!"),
+                [new ApiError("Были выбраны не существующие продукты")]));
+        }
 
         var items = products.Join(request.Items, p => p.Id, d => d.ProductId, (p, d) => (d.Count, p));
         var orderId = Guid.NewGuid();
 
-        var creationUniqueOrderItemsResult = OrderItemCollection.Create(orderId, items.ToList());
+        var result = OrderItemCollection.Create(orderId, items.ToList());
 
-        if (creationUniqueOrderItemsResult.Failure)
+        if (result.Failure)
         {
-            return Results.BadRequest(creationUniqueOrderItemsResult.ToApiResponse());
+            return Results.BadRequest(result.ToApiResponse());
         }
 
-        var order = Order.Create(orderId, user.Id, creationUniqueOrderItemsResult.Data!);
+        var order = Order.Create(orderId, user.Id, result.Data!);
         await ordersRepository.CreateAsync(order);
 
-        return Results.Created("", order);
+        return Results.Created("", order.Id);
     }
 
     private static async Task<IResult> GetMyOrdersAsync(
         [FromServices] ICurrentUserProvider userProvider,
         [FromServices] IProductsRepository productsRepository,
+        [FromServices] IGetMyOrdersModelMapper mapper,
         [FromServices] IOrdersRepository ordersRepository)
     {
         var user = userProvider.Get();
@@ -60,8 +76,7 @@ public static class OrderEndpoints
         if (orders.Count == 0)
             return Results.NoContent();
 
-        var getOrdersBody = orders;
-
-        return Results.Ok(ApiResponse.Ok(getOrdersBody));
+        var models = mapper.Map(orders);
+        return Results.Ok(ApiResponse.Ok(models));
     }
 }

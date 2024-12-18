@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Solution.Host.Contracts;
 using Solution.Host.Domain.Entities;
 using Solution.Host.Domain.Interfaces.Repositories;
 using Solution.Host.Domain.ValueObjects;
 using Solution.Host.Endpoints.Services;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 
 namespace Solution.Host.Endpoints;
 
@@ -26,11 +25,17 @@ public static class UsersEndpoints
     }
 
     private static async Task<IResult> LoginAsync(
-        [FromBody] UserLoginRequest request,
         [FromServices] IUsersRepository usersRepository,
         [FromServices] IPasswordHasher passwordHasher,
-        [FromServices] IJwtGenerator jwtGenerator)
+        [FromServices] IJwtGenerator jwtGenerator,
+        [FromServices] IValidator<UserLoginRequest> validator,
+        [FromBody] UserLoginRequest request)
     {
+        var validationResult = validator.Validate(request);
+
+        if (!validationResult.IsValid)
+            return Results.BadRequest(validationResult.Errors);
+
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
         if (user == null)
@@ -48,8 +53,15 @@ public static class UsersEndpoints
     private static async Task<IResult> RegisterAsync(
         [FromServices] IUsersRepository usersRepository,
         [FromServices] IPasswordHasher passwordHasher,
+        [FromServices] IValidator<UserRegisterRequest> validator,
         [FromBody] UserRegisterRequest request)
+
     {
+        var validationResult = validator.Validate(request);
+
+        if (!validationResult.IsValid)
+            return Results.BadRequest(validationResult.Errors);
+
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
         if (user != null)
