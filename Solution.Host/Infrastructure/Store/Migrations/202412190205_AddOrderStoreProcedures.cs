@@ -14,7 +14,7 @@ public class AddOrderStoreProcedures : Migration
                 @ProductId UNIQUEIDENTIFIER,
                 @Count BIGINT,
                 @Amount DECIMAL,
-                @Currency NVARCHAR
+                @Currency NVARCHAR(10)
             AS
             BEGIN
                 INSERT INTO OrderItems (Id, OrderId, ProductId, Count, Amount, Currency)
