@@ -6,5 +6,5 @@ namespace Solution.Host.Domain.Interfaces.Repositories;
 public interface IOrdersRepository
 {
     Task CreateAsync(Order order);
-    Task<ICollection<Order>> GetByCustomerId(CustomerId id);
+    Task<ICollection<Order>> GetByUserId(CustomerId id);
 }

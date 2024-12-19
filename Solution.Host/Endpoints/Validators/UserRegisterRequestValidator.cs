@@ -13,7 +13,7 @@ internal class UserRegisterRequestValidator : AbstractValidator<UserRegisterRequ
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
-            .Length(5, 100).WithMessage("Password must be between 5 and 100 characters.");
+            .Length(5, 255).WithMessage("Password must be between 5 and 255 characters.");
 
         RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage("First name is required.")
@@ -29,7 +29,7 @@ internal class UserRegisterRequestValidator : AbstractValidator<UserRegisterRequ
 
         RuleFor(x => x.Address)
             .NotEmpty().WithMessage("Address is required.")
-            .Length(2, 100).WithMessage("Address must be between 2 and 100 characters.");
+            .Length(2, 500).WithMessage("Address must be between 2 and 500 characters.");
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")

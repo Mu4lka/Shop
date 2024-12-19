@@ -36,7 +36,7 @@ public static class OrderEndpoints
         var validationResult = validator.Validate(request);
 
         if (!validationResult.IsValid)
-            return Results.BadRequest(validationResult.Errors);
+            return Results.ValidationProblem(validationResult.ToDictionary());
 
         var user = userProvider.Get();
         var products = await productsRepository.GetByIdsAsync(request.Items.Select(i => i.ProductId).ToList());
@@ -71,7 +71,7 @@ public static class OrderEndpoints
         [FromServices] IOrdersRepository ordersRepository)
     {
         var user = userProvider.Get();
-        var orders = await ordersRepository.GetByCustomerId(user.Id);
+        var orders = await ordersRepository.GetByUserId(user.Id);
 
         if (orders.Count == 0)
             return Results.NoContent();

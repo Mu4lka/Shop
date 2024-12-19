@@ -1,5 +1,4 @@
 ﻿using Solution.Host.Domain.ValueObjects;
-using Solution.Host.Utils;
 
 namespace Solution.Host.Domain.Entities;
 
@@ -56,7 +55,7 @@ public class Order : Entity
     /// <summary>
     /// Добавить элемент к заказу
     /// </summary>
-    /// <param name="item"></param>
+    /// <param name="item">Элемент</param>
     /// <returns></returns>
     public bool AddOrderItem(OrderItem item)
         => _orderItems.Add(item);

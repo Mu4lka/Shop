@@ -34,7 +34,7 @@ public static class UsersEndpoints
         var validationResult = validator.Validate(request);
 
         if (!validationResult.IsValid)
-            return Results.BadRequest(validationResult.Errors);
+            return Results.ValidationProblem(validationResult.ToDictionary());
 
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
@@ -60,7 +60,7 @@ public static class UsersEndpoints
         var validationResult = validator.Validate(request);
 
         if (!validationResult.IsValid)
-            return Results.BadRequest(validationResult.Errors);
+            return Results.ValidationProblem(validationResult.ToDictionary());
 
         var user = await usersRepository.GetByEmailAsync(request.Email);
 
