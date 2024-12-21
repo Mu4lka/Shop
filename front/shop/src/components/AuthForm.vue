@@ -181,4 +181,39 @@ export default {
 .toggle-button:hover {
   color: #0056b3;
 }
+
+/* Адаптивные стили для телефонов */
+@media (max-width: 768px) {
+  .auth-form {
+    max-width: 100%;
+    min-width: auto;
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .name-group {
+    flex-direction: column;
+    gap: 0; /* Убираем отступы между элементами */
+  }
+
+  .name-group .form-group {
+    width: 100%; /* На телефоне каждая строка занимает 100% */
+    margin-bottom: 10px; /* Добавляем отступ снизу */
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-form {
+    padding: 15px;
+  }
+
+  .submit-button {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .toggle-button {
+    font-size: 12px;
+  }
+}
 </style>

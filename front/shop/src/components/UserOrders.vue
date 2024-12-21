@@ -108,7 +108,7 @@ export default {
   padding: 20px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 50%;
+  width: 100%; /* Устанавливаем ширину на 100% по умолчанию */
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 .order-card:hover {
@@ -195,5 +195,50 @@ export default {
   font-weight: bold;
   text-align: right;
   color: #333;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .order-list {
+    gap: 12px; /* Уменьшенный отступ для мобильных устройств */
+  }
+
+  .order-card {
+    padding: 16px; /* Уменьшенный внутренний отступ */
+    width: 100%; /* Карточка занимает всю ширину экрана */
+  }
+
+  .order-header h3 {
+    font-size: 16px; /* Уменьшенный размер шрифта */
+  }
+
+  .order-info {
+    gap: 8px; /* Уменьшенный отступ между элементами */
+  }
+
+  .order-date, .order-status {
+    font-size: 12px; /* Уменьшенный шрифт для информации */
+  }
+
+  .toggle-items {
+    padding: 6px 12px; /* Меньшая кнопка для мобильных */
+    font-size: 12px;
+  }
+
+  .order-items {
+    padding-top: 12px; /* Уменьшенный отступ сверху */
+  }
+
+  .item-title {
+    font-size: 14px; /* Уменьшенный шрифт названия товара */
+  }
+
+  .item-price {
+    font-size: 14px; /* Уменьшенный шрифт цены */
+  }
+
+  .order-total {
+    font-size: 14px; /* Уменьшенный шрифт общей суммы */
+  }
 }
 </style>

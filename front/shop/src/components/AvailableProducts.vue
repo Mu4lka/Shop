@@ -117,6 +117,7 @@ export default {
       this.showModal = false;
     },
     async confirmOrder() {
+      this.showModal = false;
       const items = Object.entries(this.selectedQuantity)
         .map(([productId, quantity]) => ({
           productId: productId,
@@ -133,7 +134,6 @@ export default {
       catch (error) {
         alert(`Ошибка создания заказа: ${error.message}`);
       }
-      this.showModal = false;
       this.selectedQuantity = {};
     },
   },

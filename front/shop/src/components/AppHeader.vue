@@ -82,4 +82,22 @@ export default {
   box-shadow: 0 0 0 3px rgba(78, 186, 48, 0.5);
 }
 
+@media (max-width: 512px) {
+  .main-header {
+    padding: 8px;
+  }
+
+  .nav-button {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  .logout-button {
+    position:static;
+    top: 0px;
+    right: 0px;
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}
 </style>
